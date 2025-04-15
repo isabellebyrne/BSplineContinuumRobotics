@@ -19,8 +19,7 @@ class ContinuumRobot:
         self.db_memo = {}  # Memoization for derivative of basis functions
 
         self.obstacles = []  # List of obstacles (center, radius)
-        # Radius of the robot (for collision detection)
-        self.robot_radius = 0.05
+        self.robot_radius = 0.05 # Radius of the robot (for collision detection)
 
     def update_knot_vector(self):
         self.n = len(self.control_points) - 1
@@ -29,7 +28,7 @@ class ContinuumRobot:
     def _generate_knot_vector(self, n, p):
         if n > p:
             internal_knots = np.linspace(
-                0, 1, n-p+2)[1:-1]  # Exclude extra 0 and 1
+                0, 1, n-p+2)[1:-1]  # exclude extra 0 and 1
         else:
             internal_knots = np.array([])
         knot_vector = np.concatenate((
@@ -40,16 +39,6 @@ class ContinuumRobot:
         return knot_vector
 
     # original 'typical' de Boor function
-        """
-        Ex.
-        Calculate N3,2(0.5):
-            Calculate N3,1(0.5):
-                Calculate N3,0(0.5) → 0 or 1 based on knot vector
-            Calculate N4,1(0.5):
-                Calculate N4,0(0.5) → 0 or 1 based on knot vector
-                Calculate N5,0(0.5) → 0 or 1 based on knot vector
-        """
-
     def _basis_functions(self, u, i, p=None):
         U = self.knot_vector
         if p is None:
@@ -108,59 +97,58 @@ class ContinuumRobot:
         return N
 
     # def _basis_function_derivative(self, u, i, p=None):
-        """
-        Calculate the derivative of basis function N_i,p at parameter u.
+        # """
+        # Calculate the derivative of basis function N_i,p at parameter u.
 
-        Args:
-            u: Parameter value
-            i: Index of control point
-            p: Degree of the basis function (default: uses the robot's degree)
+        # Args:
+        #     u: Parameter value
+        #     i: Index of control point
+        #     p: Degree of the basis function (default: uses the robot's degree)
 
-        Returns:
-            Value of the basis function derivative at u
-        """
-        U = self.knot_vector
-        if p is None:
-            p = self.p
+        # Returns:
+        #     Value of the basis function derivative at u
+        # """
+        # U = self.knot_vector
+        # if p is None:
+        #     p = self.p
 
-        # Use memoized value if available
-        if (u, i, p) in self.db_memo:
-            return self.db_memo[(u, i, p)]
+        # # Use memoized value if available
+        # if (u, i, p) in self.db_memo:
+        #     return self.db_memo[(u, i, p)]
 
-        # Base case
-        if p == 0:
-            result = 0.0
-        else:
-            # Recursive case for derivative
-            coef1 = safe_divide(p, U[i + p] - U[i])
-            coef2 = safe_divide(p, U[i + p + 1] - U[i + 1])
-            term1 = coef1 * \
-                self._basis_functions(
-                    u, i, p - 1) if abs(coef1) > 1e-10 else 0.0
-            term2 = coef2 * \
-                self._basis_functions(
-                    u, i + 1, p - 1) if abs(coef2) > 1e-10 else 0.0
-            result = term1 - term2
+        # # Base case
+        # if p == 0:
+        #     result = 0.0
+        # else:
+        #     # Recursive case for derivative
+        #     coef1 = safe_divide(p, U[i + p] - U[i])
+        #     coef2 = safe_divide(p, U[i + p + 1] - U[i + 1])
+        #     term1 = coef1 * \
+        #         self._basis_functions(
+        #             u, i, p - 1) if abs(coef1) > 1e-10 else 0.0
+        #     term2 = coef2 * \
+        #         self._basis_functions(
+        #             u, i + 1, p - 1) if abs(coef2) > 1e-10 else 0.0
+        #     result = term1 - term2
 
-        self.db_memo[(u, i, p)] = result
-        return result
+        # self.db_memo[(u, i, p)] = result
+        # return result
 
     # def _get_tangent_vector(self, u, control_points=None):
+        # if control_points is None:
+        #     control_points = self.control_points
 
-        if control_points is None:
-            control_points = self.control_points
+        # tangent = np.zeros(3)
+        # for i in range(self.n + 1):
+        #     db_i = self._basis_function_derivative(u, i)
+        #     tangent += db_i * control_points[i]
 
-        tangent = np.zeros(3)
-        for i in range(self.n + 1):
-            db_i = self._basis_function_derivative(u, i)
-            tangent += db_i * control_points[i]
+        # # Normalize tangent vector
+        # norm = np.linalg.norm(tangent)
+        # if norm > 1e-10:
+        #     tangent = tangent / norm
 
-        # Normalize tangent vector
-        norm = np.linalg.norm(tangent)
-        if norm > 1e-10:
-            tangent = tangent / norm
-
-        return tangent
+        # return tangent
 
     def _get_point_on_curve(self, u, control_points=None):
         if control_points is None:
