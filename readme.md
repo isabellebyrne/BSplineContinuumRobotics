@@ -1,6 +1,6 @@
 # BSplineContinuumRobotics
 
-A Python library for modeling and controlling continuum robots using B-splines.
+Python code for modeling and controlling continuum robots using B-splines.
 
 ## What It Does
 
