@@ -1,10 +1,10 @@
 # BSplineContinuumRobotics
 
-A Python library for modeling and controlling continuum robots using B-splines.
+Python code for modeling and controlling continuum robots using B-splines.
 
 ## What It Does
 
-This library lets you:
+This code lets you:
 - Model a continuum robot's shape using B-spline curves
 - Calculate forward kinematics (robot shape from control points)
 - Solve inverse kinematics (finding control points to reach a target)
@@ -69,10 +69,10 @@ MIT License
 ## Citation
 
 ```
-@software{byrne2023bspline,
+@software{byrne2025bspline,
   author = {Byrne, Isabelle},
   title = {BSplineContinuumRobotics},
-  year = {2023},
+  year = {2025},
   url = {https://github.com/isabellebyrne/BSplineContinuumRobotics}
 }
 ```
